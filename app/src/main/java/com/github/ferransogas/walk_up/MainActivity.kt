@@ -26,8 +26,8 @@ class MainActivity : ComponentActivity() {
             WalkUpTheme {
                 if (isEditingAlarm) {
                     editAlarmScreen(
-                        onSave = {isEditingAlarm = false},
-                        onCancel = {isEditingAlarm = false}
+                        onSave = { isEditingAlarm = false },
+                        onCancel = { isEditingAlarm = false }
                     )
                 } else {
                     alarmScreen(
@@ -98,6 +98,19 @@ class MainActivity : ComponentActivity() {
                     Spacer(
                         modifier = Modifier.height(24.dp)
                     )
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        TextButton(onClick = { onCancel() }) {
+                            Text(text = "Cancel")
+                        }
+                        Spacer(Modifier.width(8.dp))
+                        Button(onClick = { onSave() }) {
+                            Text(text = "Save")
+                        }
+
+                    }
                 }
             }
         }
