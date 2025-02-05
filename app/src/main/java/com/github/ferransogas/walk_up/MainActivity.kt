@@ -63,11 +63,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun editAlarmScreen(
         onSave: () -> Unit,
         onCancel: () -> Unit
     ) {
+
+        val timePickerState = rememberTimePickerState(
+            initialHour = 0,
+            initialMinute = 0
+        )
+
         Dialog(onDismissRequest = onCancel) {
             Surface(
                 shape = MaterialTheme.shapes.medium,
@@ -79,7 +86,17 @@ class MainActivity : ComponentActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "hola"
+                        text = "Set Alarm",
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                    Spacer(
+                        modifier = Modifier.height(16.dp)
+                    )
+                    TimePicker(
+                        state = timePickerState
+                    )
+                    Spacer(
+                        modifier = Modifier.height(24.dp)
                     )
                 }
             }
