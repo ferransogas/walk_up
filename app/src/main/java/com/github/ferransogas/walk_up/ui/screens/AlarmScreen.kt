@@ -9,32 +9,65 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import com.github.ferransogas.walk_up.data.AlarmDataStore
 import java.util.*
+import com.github.ferransogas.walk_up.data.AlarmData
+import kotlinx.coroutines.launch
 
 @Composable
 fun alarmScreen(
     onTapBehaviour: () -> Unit
 ) {
-    Scaffold { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = String.format(Locale.getDefault(), "%02d:%02d", 5, 12),
-                style = MaterialTheme.typography.displayLarge,
-                modifier = Modifier.clickable { onTapBehaviour() }
-            )
-            Switch(
-                checked = false,
-                onCheckedChange = {},
-            )
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val alarmDataState = remember { mutableStateOf<AlarmData?>(null) }
+
+    LaunchedEffect(context) {
+        AlarmDataStore.getAlarm(context).collect { alarmData ->
+            alarmDataState.value = alarmData
         }
     }
+
+    val alarmData = alarmDataState.value
+
+    alarmData?.let {
+        Scaffold { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = String.format(
+                        Locale.getDefault(),
+                        "%02d:%02d",
+                        alarmData.hour,
+                        alarmData.minutes
+                    ),
+                    style = MaterialTheme.typography.displayLarge,
+                    modifier = Modifier.clickable { onTapBehaviour() }
+                )
+                Switch(
+                    checked = alarmData.enabled,
+                    onCheckedChange = { isEnabled ->
+                        coroutineScope.launch {
+                            AlarmDataStore.saveAlarm(
+                                context = context,
+                                hour = alarmData.hour,
+                                minutes = alarmData.minutes,
+                                enabled = isEnabled
+                            )
+                        }
+                    },
+                )
+            }
+        }
+    }
+
 }
