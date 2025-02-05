@@ -5,17 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.github.ferransogas.walk_up.ui.theme.WalkUpTheme
 import java.util.Locale
 
@@ -29,16 +25,23 @@ class MainActivity : ComponentActivity() {
         setContent {
             WalkUpTheme {
                 if (isEditingAlarm) {
-                    editAlarmScreen()
+                    editAlarmScreen(
+                        onSave = {isEditingAlarm = false},
+                        onCancel = {isEditingAlarm = false}
+                    )
                 } else {
-                    alarmScreen(onTapBehaviour = { isEditingAlarm = true })
+                    alarmScreen(
+                        onTapBehaviour = { isEditingAlarm = true }
+                    )
                 }
             }
         }
     }
 
     @Composable
-    private fun alarmScreen(onTapBehaviour: () -> Unit) {
+    private fun alarmScreen(
+        onTapBehaviour: () -> Unit
+    ) {
         Scaffold { innerPadding ->
             Column(
                 modifier = Modifier
@@ -61,11 +64,25 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun editAlarmScreen() {
-        Scaffold {
-            Text(
-                text = "hola"
-            )
+    private fun editAlarmScreen(
+        onSave: () -> Unit,
+        onCancel: () -> Unit
+    ) {
+        Dialog(onDismissRequest = onCancel) {
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.width(300.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "hola"
+                    )
+                }
+            }
         }
     }
 }
