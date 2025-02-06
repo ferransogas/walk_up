@@ -20,20 +20,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun alarmScreen(
-    onTapBehaviour: () -> Unit
+    alarmData: AlarmData?,
+    onTapBehaviour: () -> Unit,
+    onToggleAlarm: (enabled: Boolean) -> Unit,
 ) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-    val alarmDataState = remember { mutableStateOf<AlarmData?>(null) }
-
-    LaunchedEffect(context) {
-        AlarmDataStore.getAlarm(context).collect { alarmData ->
-            alarmDataState.value = alarmData
-        }
-    }
-
-    val alarmData = alarmDataState.value
-
     alarmData?.let {
         Scaffold { innerPadding ->
             Column(
@@ -48,7 +38,7 @@ fun alarmScreen(
                         Locale.getDefault(),
                         "%02d:%02d",
                         alarmData.hour,
-                        alarmData.minutes
+                        alarmData.minute
                     ),
                     style = MaterialTheme.typography.displayLarge,
                     modifier = Modifier.clickable { onTapBehaviour() }
@@ -56,14 +46,7 @@ fun alarmScreen(
                 Switch(
                     checked = alarmData.enabled,
                     onCheckedChange = { isEnabled ->
-                        coroutineScope.launch {
-                            AlarmDataStore.saveAlarm(
-                                context = context,
-                                hour = alarmData.hour,
-                                minutes = alarmData.minutes,
-                                enabled = isEnabled
-                            )
-                        }
+                        onToggleAlarm(isEnabled)
                     },
                 )
             }

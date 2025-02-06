@@ -12,10 +12,10 @@ object AlarmDataStore {
     private val ALARM_MINUTE = intPreferencesKey("alarm_minute")
     private val ALARM_ENABLED = booleanPreferencesKey("alarm_enabled")
 
-    suspend fun saveAlarm(context: Context, hour: Int, minutes: Int, enabled: Boolean) {
+    suspend fun saveAlarm(context: Context, hour: Int, minute: Int, enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[ALARM_HOUR] = hour
-            preferences[ALARM_MINUTE] = minutes
+            preferences[ALARM_MINUTE] = minute
             preferences[ALARM_ENABLED] = enabled
         }
     }
@@ -31,4 +31,4 @@ object AlarmDataStore {
     }
 }
 
-data class AlarmData(val hour: Int, val minutes: Int, val enabled: Boolean)
+data class AlarmData(val hour: Int, val minute: Int, val enabled: Boolean)
