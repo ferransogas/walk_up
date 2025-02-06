@@ -2,7 +2,11 @@ package com.github.ferransogas.walk_up
 
 import android.app.AlarmManager
 import android.app.Service
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,10 +21,12 @@ import com.github.ferransogas.walk_up.ui.screens.editAlarmScreen
 import androidx.compose.material3.Surface
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.ferransogas.walk_up.model.AlarmViewModel
+import com.github.ferransogas.walk_up.ui.screens.requestPermissionsPopup
 
 
 class MainActivity : ComponentActivity() {
@@ -112,7 +118,8 @@ private fun mainScreen() {
         val alarmViewModel = AlarmViewModel(
             context = context,
             alarmManager = context.getSystemService(Service.ALARM_SERVICE) as AlarmManager,
-            coroutineScope = rememberCoroutineScope()
+            coroutineScope = rememberCoroutineScope(),
+            navController = navController
         )
 
         NavHost(
@@ -136,13 +143,26 @@ private fun mainScreen() {
                 editAlarmScreen(
                     alarmData = alarmData,
                     onSave = { hour, minute ->
+                        navController.navigateUp()
                         alarmViewModel.setAlarm(
                             hour = hour,
                             minute = minute
                         )
-                        navController.navigateUp()
                     },
                     onCancel = { navController.navigateUp() }
+                )
+            }
+            composable(route = "requestPermissions") {
+                requestPermissionsPopup(
+                    onAccept = {
+                        navController.navigateUp()
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                        }
+                    },
+                    onDeny = {
+                        navController.navigateUp()
+                    }
                 )
             }
         }

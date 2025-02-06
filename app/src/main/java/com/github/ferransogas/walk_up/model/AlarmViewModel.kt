@@ -6,16 +6,25 @@ import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.BlendMode.Companion.Screen
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.github.ferransogas.walk_up.data.AlarmDataStore
+import com.github.ferransogas.walk_up.ui.screens.requestPermissionsPopup
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class AlarmViewModel(
     private val context: Context,
     private val alarmManager: AlarmManager,
-    private val coroutineScope: CoroutineScope
+    private val coroutineScope: CoroutineScope,
+    private val navController: NavController
 ) {
-
     fun setAlarm(hour: Int, minute: Int) {
         coroutineScope.launch {
             AlarmDataStore.saveAlarm(
@@ -37,9 +46,8 @@ class AlarmViewModel(
         }
         if (enabled) {
             coroutineScope.launch {
-                AlarmDataStore.getAlarm(context).collect {
-                    scheduleAlarm(it.hour, it.minute)
-                }
+                val alarm = AlarmDataStore.getAlarm(context).first()
+                scheduleAlarm(alarm.hour, alarm.minute)
             }
         } else {
             cancelAlarm()
@@ -62,9 +70,12 @@ class AlarmViewModel(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (alarmManager.canScheduleExactAlarms()) {
                 scheduleExactAlarm(pendingIntent, triggerAtMillis)
+            } else {
+                toggleAlarm(enabled = false)
+                navController.navigate("requestPermissions")
             }
         } else {
             scheduleExactAlarm(pendingIntent, triggerAtMillis)
