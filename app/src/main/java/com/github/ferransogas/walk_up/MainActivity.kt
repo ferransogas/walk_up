@@ -28,63 +28,56 @@ class MainActivity : ComponentActivity() {
 }
 
 sealed class AppScreen {
-    object Alarm : AppScreen()
-    object Edit : AppScreen()
+    data object Alarm : AppScreen()
+    data object Edit : AppScreen()
 }
 
 @Composable
 private fun mainScreen() {
     var currentScreen by remember { mutableStateOf<AppScreen>(AppScreen.Alarm) }
-    val alarmDataState = remember { mutableStateOf<AlarmData?>(null) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        AlarmDataStore.getAlarm(context).collect { alarmData ->
-            alarmDataState.value = alarmData
+    val alarmData by produceState<AlarmData?>(initialValue = null) {
+        AlarmDataStore.getAlarm(context).collect {
+            value = it
         }
     }
 
-    when (currentScreen) {
-        is AppScreen.Alarm -> {
-            alarmScreen(
-                alarmData = alarmDataState.value,
-                onTapBehaviour = {
-                    currentScreen = AppScreen.Edit
-                },
-                onToggleAlarm = { enabled ->
-                    coroutineScope.launch {
-                        alarmDataState.value?.let { alarmData ->
-                            AlarmDataStore.saveAlarm(
-                                context = context,
-                                hour = alarmData.hour,
-                                minute = alarmData.minute,
-                                enabled = enabled
-                            )
-                        }
-                    }
+    alarmScreen(
+        alarmData = alarmData,
+        onTapBehaviour = {
+            currentScreen = AppScreen.Edit
+        },
+        onToggleAlarm = { enabled ->
+            coroutineScope.launch {
+                alarmData?.let { alarmData ->
+                    AlarmDataStore.saveAlarm(
+                        context = context,
+                        hour = alarmData.hour,
+                        minute = alarmData.minute,
+                        enabled = enabled
+                    )
                 }
-            )
+            }
         }
-        is AppScreen.Edit -> {
-            editAlarmScreen(
-                alarmData = alarmDataState.value,
-                onSave = { hour, minute ->
-                    coroutineScope.launch {
-                        AlarmDataStore.saveAlarm(
-                            context = context,
-                            hour = hour,
-                            minute = minute,
-                            enabled = true
-                        )
-                        AlarmDataStore.getAlarm(context).collect { alarmData ->
-                            alarmDataState.value = alarmData
-                        }
-                    }
-                    currentScreen = AppScreen.Alarm
-                },
-                onCancel = { currentScreen = AppScreen.Alarm }
-            )
-        }
+    )
+
+    if (currentScreen is AppScreen.Edit) {
+        editAlarmScreen(
+            alarmData = alarmData,
+            onSave = { hour, minute ->
+                coroutineScope.launch {
+                    AlarmDataStore.saveAlarm(
+                        context = context,
+                        hour = hour,
+                        minute = minute,
+                        enabled = true
+                    )
+                }
+                currentScreen = AppScreen.Alarm
+            },
+            onCancel = { currentScreen = AppScreen.Alarm }
+        )
     }
 }
