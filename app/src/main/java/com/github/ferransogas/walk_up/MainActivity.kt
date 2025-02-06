@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import com.github.ferransogas.walk_up.data.AlarmData
@@ -12,6 +13,13 @@ import com.github.ferransogas.walk_up.ui.theme.WalkUpTheme
 import com.github.ferransogas.walk_up.ui.screens.alarmScreen
 import com.github.ferransogas.walk_up.ui.screens.editAlarmScreen
 import kotlinx.coroutines.launch
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode.Companion.Screen
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 
 class MainActivity : ComponentActivity() {
@@ -34,6 +42,7 @@ sealed class AppScreen {
 
 @Composable
 private fun mainScreen() {
+    /* TODO: Test and decide which mainScreen code is more efficient
     var currentScreen by remember { mutableStateOf<AppScreen>(AppScreen.Alarm) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -79,5 +88,64 @@ private fun mainScreen() {
             },
             onCancel = { currentScreen = AppScreen.Alarm }
         )
+    }
+     */
+
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        val navController = rememberNavController()
+        val context = LocalContext.current
+        val coroutineScope = rememberCoroutineScope()
+
+        val alarmData by produceState<AlarmData?>(initialValue = null) {
+            AlarmDataStore.getAlarm(context).collect {
+                value = it
+            }
+        }
+
+        NavHost(
+            navController = navController,
+            startDestination = "alarm"
+        ) {
+            composable(route = "alarm") {
+                alarmScreen(
+                    alarmData = alarmData,
+                    onTapBehaviour = {
+                        navController.navigate(route = "edit")
+                    },
+                    onToggleAlarm = { enabled ->
+                        coroutineScope.launch {
+                            alarmData?.let { alarmData ->
+                                AlarmDataStore.saveAlarm(
+                                    context = context,
+                                    hour = alarmData.hour,
+                                    minute = alarmData.minute,
+                                    enabled = enabled
+                                )
+                            }
+                        }
+                    }
+                )
+            }
+            composable(route = "edit") {
+                editAlarmScreen(
+                    alarmData = alarmData,
+                    onSave = { hour, minute ->
+                        coroutineScope.launch {
+                            AlarmDataStore.saveAlarm(
+                                context = context,
+                                hour = hour,
+                                minute = minute,
+                                enabled = true
+                            )
+                        }
+                        navController.navigateUp()
+                    },
+                    onCancel = { navController.navigateUp() }
+                )
+            }
+        }
     }
 }
