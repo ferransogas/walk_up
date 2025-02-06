@@ -2,7 +2,6 @@ package com.github.ferransogas.walk_up
 
 import android.app.AlarmManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -21,7 +20,6 @@ import com.github.ferransogas.walk_up.ui.screens.editAlarmScreen
 import androidx.compose.material3.Surface
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
