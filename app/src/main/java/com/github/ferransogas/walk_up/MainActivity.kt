@@ -1,5 +1,7 @@
 package com.github.ferransogas.walk_up
 
+import android.app.AlarmManager
+import android.app.Service
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,20 +14,21 @@ import com.github.ferransogas.walk_up.data.AlarmDataStore
 import com.github.ferransogas.walk_up.ui.theme.WalkUpTheme
 import com.github.ferransogas.walk_up.ui.screens.alarmScreen
 import com.github.ferransogas.walk_up.ui.screens.editAlarmScreen
-import kotlinx.coroutines.launch
 import androidx.compose.material3.Surface
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.ferransogas.walk_up.model.AlarmViewModel
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+
 
         setContent {
             WalkUpTheme {
@@ -35,10 +38,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/*
 sealed class AppScreen {
     data object Alarm : AppScreen()
     data object Edit : AppScreen()
 }
+ */
 
 @Composable
 private fun mainScreen() {
@@ -97,13 +102,18 @@ private fun mainScreen() {
     ) {
         val navController = rememberNavController()
         val context = LocalContext.current
-        val coroutineScope = rememberCoroutineScope()
 
         val alarmData by produceState<AlarmData?>(initialValue = null) {
             AlarmDataStore.getAlarm(context).collect {
                 value = it
             }
         }
+
+        val alarmViewModel = AlarmViewModel(
+            context = context,
+            alarmManager = context.getSystemService(Service.ALARM_SERVICE) as AlarmManager,
+            coroutineScope = rememberCoroutineScope()
+        )
 
         NavHost(
             navController = navController,
@@ -116,16 +126,9 @@ private fun mainScreen() {
                         navController.navigate(route = "edit")
                     },
                     onToggleAlarm = { enabled ->
-                        coroutineScope.launch {
-                            alarmData?.let { alarmData ->
-                                AlarmDataStore.saveAlarm(
-                                    context = context,
-                                    hour = alarmData.hour,
-                                    minute = alarmData.minute,
-                                    enabled = enabled
-                                )
-                            }
-                        }
+                        alarmViewModel.toggleAlarm(
+                            enabled = enabled
+                        )
                     }
                 )
             }
@@ -133,14 +136,10 @@ private fun mainScreen() {
                 editAlarmScreen(
                     alarmData = alarmData,
                     onSave = { hour, minute ->
-                        coroutineScope.launch {
-                            AlarmDataStore.saveAlarm(
-                                context = context,
-                                hour = hour,
-                                minute = minute,
-                                enabled = true
-                            )
-                        }
+                        alarmViewModel.setAlarm(
+                            hour = hour,
+                            minute = minute
+                        )
                         navController.navigateUp()
                     },
                     onCancel = { navController.navigateUp() }

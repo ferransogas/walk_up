@@ -21,6 +21,12 @@ object AlarmDataStore {
         }
     }
 
+    suspend fun toggleAlarm(context: Context, enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[ALARM_ENABLED] = enabled
+        }
+    }
+
     fun getAlarm(context: Context): Flow<AlarmData> {
         return context.dataStore.data.map { preferences ->
             AlarmData(
