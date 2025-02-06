@@ -1,4 +1,5 @@
 package com.github.ferransogas.walk_up.data
+
 import android.content.Context
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
