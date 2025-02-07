@@ -11,6 +11,7 @@ import androidx.compose.ui.window.Dialog
 
 @Composable
 fun requestPermissionsPopup(
+    permission: String,
     onAccept: () -> Unit,
     onDeny: () -> Unit,
 ) {
@@ -26,7 +27,7 @@ fun requestPermissionsPopup(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Please grant alarm permission to set the alarm.",
+                    text = "Please grant $permission permission to set the alarm.",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center

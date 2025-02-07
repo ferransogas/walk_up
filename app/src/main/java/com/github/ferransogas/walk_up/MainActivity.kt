@@ -1,7 +1,9 @@
 package com.github.ferransogas.walk_up
 
 import android.app.AlarmManager
+import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -105,6 +107,16 @@ private fun mainScreen() {
         val navController = rememberNavController()
         val context = LocalContext.current
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            /*if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            )*/ if (!notificationManager.areNotificationsEnabled()) {
+
+            }
+        }
+
         val alarmData by produceState<AlarmData?>(initialValue = null) {
             AlarmDataStore.getAlarm(context).collect {
                 value = it
@@ -148,13 +160,32 @@ private fun mainScreen() {
                     onCancel = { navController.navigateUp() }
                 )
             }
-            composable(route = "requestPermissions") {
+            composable(route = "requestAlarmPermission") {
                 requestPermissionsPopup(
+                    permission = "alarm",
                     onAccept = {
                         navController.navigateUp()
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                            context.startActivity(
+                                Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                            )
                         }
+                    },
+                    onDeny = {
+                        navController.navigateUp()
+                    }
+                )
+            }
+            composable(route = "requestNotificationsPermission") {
+                requestPermissionsPopup(
+                    permission = "notifications",
+                    onAccept = {
+                        navController.navigateUp()
+                        context.startActivity(
+                            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                            }
+                        )
                     },
                     onDeny = {
                         navController.navigateUp()

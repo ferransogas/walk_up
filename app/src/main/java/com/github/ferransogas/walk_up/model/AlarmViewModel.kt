@@ -1,6 +1,7 @@
 package com.github.ferransogas.walk_up.model
 
 import android.app.AlarmManager
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -55,30 +56,38 @@ class AlarmViewModel(
     private fun scheduleAlarm(hour: Int, minute: Int) {
         val triggerAtMillis: Long = getTimeInMillis(hour, minute)
 
-        val intent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
+        val alarmIntent = Intent(context, AlarmReceiver::class.java).apply {
+            action = "com.github.ferransogas.walk_up.ALARM_TRIGGERED"
+        }
+        val alarmPendingIntent = PendingIntent.getBroadcast(
             context,
             0,
-            intent,
+            alarmIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager.canScheduleExactAlarms()) {
-                alarmManager.setAlarmClock(
-                    AlarmManager.AlarmClockInfo(triggerAtMillis, pendingIntent),
-                    pendingIntent
-                )
-            } else {
-                toggleAlarm(enabled = false)
-                navController.navigate("requestPermissions")
-            }
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (!notificationManager.areNotificationsEnabled()) {
+            toggleAlarm(enabled = false)
+            navController.navigate("requestNotificationsPermission")
         } else {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                triggerAtMillis,
-                pendingIntent
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setAlarmClock(
+                        AlarmManager.AlarmClockInfo(triggerAtMillis, alarmPendingIntent),
+                        alarmPendingIntent
+                    )
+                } else {
+                    toggleAlarm(enabled = false)
+                    navController.navigate("requestAlarmPermission")
+                }
+            } else {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    triggerAtMillis,
+                    alarmPendingIntent
+                )
+            }
         }
     }
 

@@ -1,9 +1,6 @@
 package com.github.ferransogas.walk_up.model
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,13 +10,18 @@ import com.github.ferransogas.walk_up.R
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == "com.github.ferransogas.walk_up.ALARM_TRIGGERED") {
+            showNotification(context)
+        }
+    }
 
+    private fun showNotification(context: Context) {
         val fullScreenIntent = Intent(context, DismissAlarmActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val fullScreenPendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            1,
             fullScreenIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
