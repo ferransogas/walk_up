@@ -15,11 +15,14 @@ class DismissAlarmActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        /*
+        //TODO: test if real devices can also wake up without the commented code
         setShowWhenLocked(true)
         setTurnScreenOn(true)
 
         val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         keyguardManager.requestDismissKeyguard(this, null)
+         */
 
         setContent {
             WalkUpTheme {
