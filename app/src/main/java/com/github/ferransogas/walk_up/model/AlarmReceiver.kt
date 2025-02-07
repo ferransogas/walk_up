@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import com.github.ferransogas.walk_up.DismissAlarmActivity
 import com.github.ferransogas.walk_up.R

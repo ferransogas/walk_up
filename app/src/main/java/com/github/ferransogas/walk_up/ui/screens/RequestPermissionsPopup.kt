@@ -43,7 +43,7 @@ fun requestPermissionsPopup(
                     }
                     Spacer(Modifier.width(8.dp))
                     Button(onClick = { onAccept() }) {
-                        Text(text = "Save")
+                        Text(text = "Accept")
                     }
 
                 }

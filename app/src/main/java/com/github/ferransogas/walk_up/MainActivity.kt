@@ -32,8 +32,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-
-
         setContent {
             WalkUpTheme {
                 mainScreen()

@@ -65,13 +65,20 @@ class AlarmViewModel(
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (alarmManager.canScheduleExactAlarms()) {
-                scheduleExactAlarm(pendingIntent, triggerAtMillis)
+                alarmManager.setAlarmClock(
+                    AlarmManager.AlarmClockInfo(triggerAtMillis, pendingIntent),
+                    pendingIntent
+                )
             } else {
                 toggleAlarm(enabled = false)
                 navController.navigate("requestPermissions")
             }
         } else {
-            scheduleExactAlarm(pendingIntent, triggerAtMillis)
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                triggerAtMillis,
+                pendingIntent
+            )
         }
     }
 
@@ -86,13 +93,5 @@ class AlarmViewModel(
                 add(Calendar.DAY_OF_YEAR, 1)
             }
         }.timeInMillis
-    }
-
-    private fun scheduleExactAlarm(pendingIntent: PendingIntent, triggerAtMillis: Long) {
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            triggerAtMillis,
-            pendingIntent
-        )
     }
 }
