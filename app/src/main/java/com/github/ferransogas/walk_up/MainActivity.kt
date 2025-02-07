@@ -1,9 +1,7 @@
 package com.github.ferransogas.walk_up
 
 import android.app.AlarmManager
-import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -106,16 +104,6 @@ private fun mainScreen() {
     ) {
         val navController = rememberNavController()
         val context = LocalContext.current
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            /*if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
-            )*/ if (!notificationManager.areNotificationsEnabled()) {
-
-            }
-        }
 
         val alarmData by produceState<AlarmData?>(initialValue = null) {
             AlarmDataStore.getAlarm(context).collect {

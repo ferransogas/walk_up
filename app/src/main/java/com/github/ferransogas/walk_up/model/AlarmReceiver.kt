@@ -23,7 +23,7 @@ class AlarmReceiver : BroadcastReceiver() {
             context,
             1,
             fullScreenIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val channel = NotificationChannel(

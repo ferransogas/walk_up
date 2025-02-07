@@ -67,7 +67,12 @@ class AlarmViewModel(
         )
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (!notificationManager.areNotificationsEnabled()) {
+        val channel = notificationManager.getNotificationChannel("alarm_channel")
+
+        if (
+            !notificationManager.areNotificationsEnabled() ||
+            (channel != null && channel.importance == NotificationManager.IMPORTANCE_NONE)
+        ) {
             toggleAlarm(enabled = false)
             navController.navigate("requestNotificationsPermission")
         } else {
