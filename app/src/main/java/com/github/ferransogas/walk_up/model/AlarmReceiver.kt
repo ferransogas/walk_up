@@ -3,7 +3,7 @@ package com.github.ferransogas.walk_up.model
 import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
+    import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.github.ferransogas.walk_up.DismissAlarmActivity
 import com.github.ferransogas.walk_up.R
@@ -12,6 +12,8 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == "com.github.ferransogas.walk_up.ALARM_TRIGGERED") {
             showNotification(context)
+            // Alarm disabled, just toggle the switch button to off
+            context.toggleAlarmState(false)
         }
     }
 

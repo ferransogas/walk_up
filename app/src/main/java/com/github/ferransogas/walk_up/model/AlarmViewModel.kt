@@ -10,6 +10,7 @@ import android.os.Build
 import androidx.navigation.NavController
 import com.github.ferransogas.walk_up.data.AlarmDataStore
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -19,6 +20,16 @@ class AlarmViewModel(
     private val coroutineScope: CoroutineScope,
     private val navController: NavController
 ) {
+    private val alarmIntent = Intent(context, AlarmReceiver::class.java).apply {
+        action = "com.github.ferransogas.walk_up.ALARM_TRIGGERED"
+    }
+    private val alarmPendingIntent = PendingIntent.getBroadcast(
+        context,
+        0,
+        alarmIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+    )
+
     fun setAlarm(hour: Int, minute: Int) {
         coroutineScope.launch {
             AlarmDataStore.saveAlarm(
@@ -32,12 +43,7 @@ class AlarmViewModel(
     }
 
     fun toggleAlarm(enabled: Boolean) {
-        coroutineScope.launch {
-            AlarmDataStore.toggleAlarm(
-                context = context,
-                enabled = enabled
-            )
-        }
+        context.toggleAlarmState(enabled)
         if (enabled) {
             coroutineScope.launch {
                 val alarm = AlarmDataStore.getAlarm(context).first()
@@ -49,22 +55,11 @@ class AlarmViewModel(
     }
 
     private fun cancelAlarm() {
-        //TODO
-        return
+        alarmManager.cancel(alarmPendingIntent)
     }
 
     private fun scheduleAlarm(hour: Int, minute: Int) {
         val triggerAtMillis: Long = getTimeInMillis(hour, minute)
-
-        val alarmIntent = Intent(context, AlarmReceiver::class.java).apply {
-            action = "com.github.ferransogas.walk_up.ALARM_TRIGGERED"
-        }
-        val alarmPendingIntent = PendingIntent.getBroadcast(
-            context,
-            0,
-            alarmIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channel = notificationManager.getNotificationChannel("alarm_channel")
@@ -107,5 +102,14 @@ class AlarmViewModel(
                 add(Calendar.DAY_OF_YEAR, 1)
             }
         }.timeInMillis
+    }
+}
+
+fun Context.toggleAlarmState(enabled: Boolean) {
+    CoroutineScope(Dispatchers.IO).launch {
+        AlarmDataStore.toggleAlarm(
+            context = this@toggleAlarmState,
+            enabled = enabled
+        )
     }
 }
