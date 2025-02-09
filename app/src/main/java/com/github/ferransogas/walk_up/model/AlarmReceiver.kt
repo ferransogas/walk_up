@@ -3,17 +3,35 @@ package com.github.ferransogas.walk_up.model
 import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
-    import android.content.Intent
+import android.content.Intent
+import android.media.MediaPlayer
+import android.media.RingtoneManager
+import android.net.Uri
 import androidx.core.app.NotificationCompat
 import com.github.ferransogas.walk_up.DismissAlarmActivity
 import com.github.ferransogas.walk_up.R
 
 class AlarmReceiver : BroadcastReceiver() {
+    private var mediaPlayer: MediaPlayer? = null
+
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == "com.github.ferransogas.walk_up.ALARM_TRIGGERED") {
             showNotification(context)
-            // Alarm disabled, just toggle the switch button to off
+            playSound(context)
+            // Alarm already disabled, just toggle the switch button to off
             context.toggleAlarmState(false)
+        }
+    }
+
+    private fun playSound(context: Context) {
+        val alarmUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            ?: Uri.parse("android.resource://${context.packageName}/${R.raw.fallback_alarm}")
+
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(context, alarmUri)
+            isLooping = true
+            prepare()
+            start()
         }
     }
 
