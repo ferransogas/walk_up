@@ -7,6 +7,10 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.core.app.NotificationCompat
 import com.github.ferransogas.walk_up.DismissAlarmActivity
 import com.github.ferransogas.walk_up.R
@@ -18,8 +22,26 @@ class AlarmReceiver : BroadcastReceiver() {
         if (intent.action == "com.github.ferransogas.walk_up.ALARM_TRIGGERED") {
             showNotification(context)
             playSound(context)
+            vibrate(context)
             // Alarm already disabled, just toggle the switch button to off
             context.toggleAlarmState(false)
+        }
+    }
+
+    private fun vibrate(context: Context) {
+        //TODO: test with real devices
+        val vibrator: Vibrator
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = context.getSystemService(VibratorManager::class.java)
+            vibrator = vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
+        if (vibrator.hasVibrator()) {
+            val pattern = longArrayOf(0, 500, 200, 500, 200, 1000,200)
+            val effect = VibrationEffect.createWaveform(pattern, 0)
+            vibrator.vibrate(effect)
         }
     }
 
