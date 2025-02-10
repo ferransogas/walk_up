@@ -16,13 +16,14 @@ class DismissAlarmActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         /*
-        //TODO: test if real devices can also wake up without the commented code
+        TODO: test if real devices can wake up without the KeyguardManager and flags
+        - Android 11 (Samsung) needed the flags and KeyguardManager
+         */
         setShowWhenLocked(true)
         setTurnScreenOn(true)
 
         val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         keyguardManager.requestDismissKeyguard(this, null)
-         */
 
         setContent {
             WalkUpTheme {
