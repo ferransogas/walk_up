@@ -75,6 +75,7 @@ class AlarmReceiver : BroadcastReceiver() {
         ).apply {
             description = "Channel for alarm notifications"
             lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            setSound(null, null)
         }
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
