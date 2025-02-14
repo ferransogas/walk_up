@@ -5,7 +5,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
@@ -19,26 +20,17 @@ fun dismissScreen() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Walk up",
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Walk to dismiss the alarm",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            circularProgress()
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = {
-                    //TODO: deactivate alarm, sound, vibration, finish activity
-                }
+            Box(
+                contentAlignment = Alignment.Center,
             ) {
-                Text(text = "Dismiss manually")
+                circularProgress()
+                Text(
+                    text = "walk up",
+                    style = MaterialTheme.typography.displaySmall,
+                    fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
     }
@@ -48,8 +40,8 @@ fun dismissScreen() {
 fun circularProgress() {
     CircularProgressIndicator(
         progress = { 0.7f },
-        modifier = Modifier.size(200.dp),
-        color = Color.Black,
-        strokeWidth = 5.dp,
+        modifier = Modifier.size(220.dp),
+        strokeWidth = 4.dp,
+        strokeCap = StrokeCap.Round
     )
 }
