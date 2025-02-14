@@ -72,6 +72,14 @@ class AlarmForegroundService : Service() {
             PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val deleteIntent = Intent(this, DismissReceiver::class.java)
+        val deletePendingIntent = PendingIntent.getBroadcast(
+            this,
+            400,
+            deleteIntent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val channel = NotificationChannel(
             "alarm_channel",
             "Alarm Service Channel",
@@ -93,7 +101,8 @@ class AlarmForegroundService : Service() {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setFullScreenIntent(fullScreenPendingIntent, true)
-            .setOngoing(true)
+            .setOngoing(false)
+            .setDeleteIntent(deletePendingIntent)
             .build()
     }
 }

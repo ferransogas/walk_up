@@ -25,6 +25,10 @@
                 <action android:name="com.github.ferransogas.walk_up.ALARM_TRIGGERED"/>
             </intent-filter>
         </receiver>
+        <receiver
+                android:name=".model.DismissReceiver"
+                android:exported="false"
+            />
         <activity
                 android:name=".MainActivity"
                 android:exported="true"
