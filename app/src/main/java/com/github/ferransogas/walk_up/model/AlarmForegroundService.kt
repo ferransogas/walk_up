@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.*
 import androidx.core.app.NotificationCompat
 import com.github.ferransogas.walk_up.DismissAlarmActivity
-import com.github.ferransogas.walk_up.MainActivity
 import com.github.ferransogas.walk_up.R
 import com.github.ferransogas.walk_up.data.AlarmDataStore
 import kotlinx.coroutines.CoroutineScope
@@ -57,10 +56,6 @@ class AlarmForegroundService : Service() {
 
         vibrator?.cancel()
         vibrator = null
-
-        this.startActivity(
-            Intent(this, MainActivity::class.java)
-        )
     }
 
     private fun vibrate(context: Context) {

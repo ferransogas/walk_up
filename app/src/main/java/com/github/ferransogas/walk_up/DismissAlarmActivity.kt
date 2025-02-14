@@ -31,12 +31,18 @@ class DismissAlarmActivity : ComponentActivity() {
             WalkUpTheme {
                 dismissScreen(
                     walkDetector = walkDetector,
-                    maxProgress = 40f,
+                    maxProgress = 25f,
                     onProgressUpdate = { progress ->
-                        if (progress >= 40f) {
+                        if (progress >= 25f) {
                             this.stopService(
                                 Intent(this, AlarmForegroundService::class.java)
                             )
+                            this.startActivity(
+                                Intent(this, MainActivity::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                            )
+                            finish()
                         }
                     }
                 )
