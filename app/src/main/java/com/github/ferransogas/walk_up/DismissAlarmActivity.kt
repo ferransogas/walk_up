@@ -15,10 +15,6 @@ class DismissAlarmActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        /*
-        TODO: test if real devices can wake up without the KeyguardManager and flags
-        - Android 11 (Samsung) needed the flags and KeyguardManager
-         */
         setShowWhenLocked(true)
         setTurnScreenOn(true)
 
