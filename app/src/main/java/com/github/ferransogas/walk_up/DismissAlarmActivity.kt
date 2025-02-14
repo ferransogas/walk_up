@@ -1,5 +1,7 @@
 package com.github.ferransogas.walk_up
 
+import android.app.KeyguardManager
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +16,12 @@ class DismissAlarmActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        setShowWhenLocked(true)
+        setTurnScreenOn(true)
+
+        val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        keyguardManager.requestDismissKeyguard(this, null)
 
         walkDetector = WalkDetector(this)
 

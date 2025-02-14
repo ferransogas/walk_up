@@ -19,6 +19,7 @@ import com.github.ferransogas.walk_up.ui.screens.alarmScreen
 import com.github.ferransogas.walk_up.ui.screens.editAlarmScreen
 import androidx.compose.material3.Surface
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -111,6 +112,12 @@ private fun mainScreen() {
             }
         }
 
+        val isActive by produceState<Boolean>(initialValue = false) {
+            AlarmDataStore.getForegroundEnabled(context).collect {
+                value = it
+            }
+        }
+
         val alarmViewModel = AlarmViewModel(
             context = context,
             alarmManager = context.getSystemService(Service.ALARM_SERVICE) as AlarmManager,
@@ -120,7 +127,7 @@ private fun mainScreen() {
 
         NavHost(
             navController = navController,
-            startDestination = "alarm"
+            startDestination = if (isActive) { "dismiss" } else { "alarm" }
         ) {
             composable(route = "alarm") {
                 alarmScreen(
@@ -149,6 +156,7 @@ private fun mainScreen() {
                 )
             }
             composable(route = "requestAlarmPermission") {
+                alarmViewModel.toggleAlarm(enabled = false)
                 requestPermissionsPopup(
                     permission = "alarm",
                     onAccept = {
@@ -165,6 +173,7 @@ private fun mainScreen() {
                 )
             }
             composable(route = "requestNotificationsPermission") {
+                alarmViewModel.toggleAlarm(enabled = false)
                 requestPermissionsPopup(
                     permission = "notifications",
                     onAccept = {
@@ -179,6 +188,9 @@ private fun mainScreen() {
                         navController.navigateUp()
                     }
                 )
+            }
+            composable(route = "dismiss") {
+                Text("Dismiss")
             }
         }
     }

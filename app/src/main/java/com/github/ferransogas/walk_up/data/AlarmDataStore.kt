@@ -12,6 +12,7 @@ object AlarmDataStore {
     private val ALARM_HOUR = intPreferencesKey("alarm_hour")
     private val ALARM_MINUTE = intPreferencesKey("alarm_minute")
     private val ALARM_ENABLED = booleanPreferencesKey("alarm_enabled")
+    private val ALARM_FOREGROUND_ENABLED = booleanPreferencesKey("alarm_foreground_enabled")
 
     suspend fun saveAlarm(context: Context, hour: Int, minute: Int, enabled: Boolean) {
         context.dataStore.edit { preferences ->
@@ -27,6 +28,12 @@ object AlarmDataStore {
         }
     }
 
+    suspend fun setForegroundEnabled(context: Context, enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[ALARM_FOREGROUND_ENABLED] = enabled
+        }
+    }
+
     fun getAlarm(context: Context): Flow<AlarmData> {
         return context.dataStore.data.map { preferences ->
             AlarmData(
@@ -34,6 +41,12 @@ object AlarmDataStore {
                 preferences[ALARM_MINUTE] ?: 0,
                 preferences[ALARM_ENABLED] ?: false
             )
+        }
+    }
+
+    fun getForegroundEnabled(context: Context): Flow<Boolean> {
+        return context.dataStore.data.map { preferences ->
+            preferences[ALARM_FOREGROUND_ENABLED] ?: false
         }
     }
 }
