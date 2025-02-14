@@ -10,6 +10,10 @@ import android.os.*
 import androidx.core.app.NotificationCompat
 import com.github.ferransogas.walk_up.DismissAlarmActivity
 import com.github.ferransogas.walk_up.R
+import com.github.ferransogas.walk_up.data.AlarmDataStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AlarmForegroundService : Service() {
     private var mediaPlayer: MediaPlayer? = null
@@ -19,6 +23,14 @@ class AlarmForegroundService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        CoroutineScope(Dispatchers.IO).launch {
+            AlarmDataStore.setForegroundEnabled(
+                context = this@AlarmForegroundService,
+                enabled = true
+            )
+        }
+
         startForeground(1, showNotification(this))
 
         playSound(this)
@@ -29,6 +41,14 @@ class AlarmForegroundService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            AlarmDataStore.setForegroundEnabled(
+                context = this@AlarmForegroundService,
+                enabled = false
+            )
+        }
+
         mediaPlayer?.release()
         mediaPlayer = null
     }
