@@ -19,7 +19,6 @@ import com.github.ferransogas.walk_up.ui.screens.alarmScreen
 import com.github.ferransogas.walk_up.ui.screens.editAlarmScreen
 import androidx.compose.material3.Surface
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -40,13 +39,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-/*
-sealed class AppScreen {
-    data object Alarm : AppScreen()
-    data object Edit : AppScreen()
-}
- */
 
 @Composable
 private fun mainScreen() {
@@ -141,7 +133,9 @@ private fun mainScreen() {
                 )
             }
             composable(route = "dismiss") {
-                Text("Dismiss")
+                context.startActivity(
+                    Intent(context, DismissAlarmActivity::class.java)
+                )
             }
         }
     }
