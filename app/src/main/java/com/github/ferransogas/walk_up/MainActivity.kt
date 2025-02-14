@@ -149,6 +149,7 @@ private fun mainScreen() {
                 )
             }
             composable(route = "requestAlarmPermission") {
+                alarmViewModel.toggleAlarm(enabled = false)
                 requestPermissionsPopup(
                     permission = "alarm",
                     onAccept = {
@@ -165,6 +166,7 @@ private fun mainScreen() {
                 )
             }
             composable(route = "requestNotificationsPermission") {
+                alarmViewModel.toggleAlarm(enabled = false)
                 requestPermissionsPopup(
                     permission = "notifications",
                     onAccept = {

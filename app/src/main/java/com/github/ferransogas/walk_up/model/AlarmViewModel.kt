@@ -68,7 +68,6 @@ class AlarmViewModel(
             !notificationManager.areNotificationsEnabled() ||
             (channel != null && channel.importance == NotificationManager.IMPORTANCE_NONE)
         ) {
-            toggleAlarm(enabled = false)
             navController.navigate("requestNotificationsPermission")
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -78,7 +77,6 @@ class AlarmViewModel(
                         alarmPendingIntent
                     )
                 } else {
-                    toggleAlarm(enabled = false)
                     navController.navigate("requestAlarmPermission")
                 }
             } else {
