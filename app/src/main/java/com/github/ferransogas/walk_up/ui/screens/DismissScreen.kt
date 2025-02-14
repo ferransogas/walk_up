@@ -13,8 +13,16 @@ import androidx.compose.ui.unit.dp
 import com.github.ferransogas.walk_up.model.WalkDetector
 
 @Composable
-fun dismissScreen(walkDetector: WalkDetector) {
+fun dismissScreen(
+    walkDetector: WalkDetector,
+    maxProgress: Float,
+    onProgressUpdate: (progress: Float) -> Unit
+) {
     val progress by walkDetector.walkProgress.collectAsState()
+
+    LaunchedEffect(progress) {
+        onProgressUpdate(progress)
+    }
 
     Surface {
         Column(
@@ -25,7 +33,7 @@ fun dismissScreen(walkDetector: WalkDetector) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(contentAlignment = Alignment.Center) {
-                circularProgress(progress)
+                circularProgress(progress, maxProgress)
                 Text(
                     text = "walk up",
                     style = MaterialTheme.typography.displaySmall,
@@ -38,9 +46,9 @@ fun dismissScreen(walkDetector: WalkDetector) {
 }
 
 @Composable
-private fun circularProgress(progress: Float) {
+private fun circularProgress(progress: Float, maxProgress: Float) {
     val animatedProgress by animateFloatAsState(
-        targetValue = progress / 60f,
+        targetValue = progress / maxProgress,
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
     )
 

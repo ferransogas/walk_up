@@ -2,10 +2,12 @@ package com.github.ferransogas.walk_up
 
 import android.app.KeyguardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.github.ferransogas.walk_up.model.AlarmForegroundService
 import com.github.ferransogas.walk_up.model.WalkDetector
 import com.github.ferransogas.walk_up.ui.screens.dismissScreen
 import com.github.ferransogas.walk_up.ui.theme.WalkUpTheme
@@ -27,7 +29,17 @@ class DismissAlarmActivity : ComponentActivity() {
 
         setContent {
             WalkUpTheme {
-                dismissScreen(walkDetector = walkDetector)
+                dismissScreen(
+                    walkDetector = walkDetector,
+                    maxProgress = 40f,
+                    onProgressUpdate = { progress ->
+                        if (progress >= 40f) {
+                            this.stopService(
+                                Intent(this, AlarmForegroundService::class.java)
+                            )
+                        }
+                    }
+                )
             }
         }
 

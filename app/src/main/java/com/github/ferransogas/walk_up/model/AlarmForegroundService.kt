@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.*
 import androidx.core.app.NotificationCompat
 import com.github.ferransogas.walk_up.DismissAlarmActivity
+import com.github.ferransogas.walk_up.MainActivity
 import com.github.ferransogas.walk_up.R
 import com.github.ferransogas.walk_up.data.AlarmDataStore
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +18,8 @@ import kotlinx.coroutines.launch
 
 class AlarmForegroundService : Service() {
     private var mediaPlayer: MediaPlayer? = null
+    private var vibrator: Vibrator? = null
+
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -51,10 +54,16 @@ class AlarmForegroundService : Service() {
 
         mediaPlayer?.release()
         mediaPlayer = null
+
+        vibrator?.cancel()
+        vibrator = null
+
+        this.startActivity(
+            Intent(this, MainActivity::class.java)
+        )
     }
 
     private fun vibrate(context: Context) {
-        val vibrator: Vibrator
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibratorManager = context.getSystemService(VibratorManager::class.java)
             vibrator = vibratorManager.defaultVibrator
@@ -62,10 +71,10 @@ class AlarmForegroundService : Service() {
             @Suppress("DEPRECATION")
             vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
-        if (vibrator.hasVibrator()) {
+        if (vibrator!!.hasVibrator()) {
             val pattern = longArrayOf(0, 500, 200, 1000, 200)
             val effect = VibrationEffect.createWaveform(pattern, 1)
-            vibrator.vibrate(effect)
+            vibrator!!.vibrate(effect)
         }
     }
 
