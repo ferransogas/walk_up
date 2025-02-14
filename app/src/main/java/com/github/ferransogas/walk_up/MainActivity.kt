@@ -50,55 +50,6 @@ sealed class AppScreen {
 
 @Composable
 private fun mainScreen() {
-    /* TODO: Test and decide which mainScreen code is more efficient
-    var currentScreen by remember { mutableStateOf<AppScreen>(AppScreen.Alarm) }
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-
-    val alarmData by produceState<AlarmData?>(initialValue = null) {
-        AlarmDataStore.getAlarm(context).collect {
-            value = it
-        }
-    }
-
-    alarmScreen(
-        alarmData = alarmData,
-        onTapBehaviour = {
-            currentScreen = AppScreen.Edit
-        },
-        onToggleAlarm = { enabled ->
-            coroutineScope.launch {
-                alarmData?.let { alarmData ->
-                    AlarmDataStore.saveAlarm(
-                        context = context,
-                        hour = alarmData.hour,
-                        minute = alarmData.minute,
-                        enabled = enabled
-                    )
-                }
-            }
-        }
-    )
-
-    if (currentScreen is AppScreen.Edit) {
-        editAlarmScreen(
-            alarmData = alarmData,
-            onSave = { hour, minute ->
-                coroutineScope.launch {
-                    AlarmDataStore.saveAlarm(
-                        context = context,
-                        hour = hour,
-                        minute = minute,
-                        enabled = true
-                    )
-                }
-                currentScreen = AppScreen.Alarm
-            },
-            onCancel = { currentScreen = AppScreen.Alarm }
-        )
-    }
-     */
-
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
