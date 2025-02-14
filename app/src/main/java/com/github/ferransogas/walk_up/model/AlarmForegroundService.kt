@@ -122,7 +122,7 @@ class AlarmForegroundService : Service() {
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setFullScreenIntent(fullScreenPendingIntent, true)
-            .setOngoing(false)
+            .setOngoing(true)
             .build()
     }
 }
