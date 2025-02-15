@@ -134,7 +134,9 @@ private fun mainScreen() {
             }
             composable(route = "dismiss") {
                 context.startActivity(
-                    Intent(context, DismissAlarmActivity::class.java)
+                    Intent(context, DismissAlarmActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    }
                 )
             }
         }

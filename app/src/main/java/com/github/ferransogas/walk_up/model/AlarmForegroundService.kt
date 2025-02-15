@@ -112,7 +112,7 @@ class AlarmForegroundService : Service() {
         return NotificationCompat.Builder(context, "alarm_channel")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Walk Up")
-            .setContentText("ALARM ALARM ALARM")
+            .setContentText("Open the app to dismiss the alarm")
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

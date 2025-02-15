@@ -18,7 +18,7 @@ class AlarmViewModel(
     private val context: Context,
     private val alarmManager: AlarmManager,
     private val coroutineScope: CoroutineScope,
-    private val navController: NavController
+    private val navController: NavController? = null
 ) {
     private val alarmIntent = Intent(context, AlarmReceiver::class.java).apply {
         action = "com.github.ferransogas.walk_up.ALARM_TRIGGERED"
@@ -68,7 +68,7 @@ class AlarmViewModel(
             !notificationManager.areNotificationsEnabled() ||
             (channel != null && channel.importance == NotificationManager.IMPORTANCE_NONE)
         ) {
-            navController.navigate("requestNotificationsPermission")
+            navController?.navigate("requestNotificationsPermission")
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 if (alarmManager.canScheduleExactAlarms()) {
@@ -77,7 +77,7 @@ class AlarmViewModel(
                         alarmPendingIntent
                     )
                 } else {
-                    navController.navigate("requestAlarmPermission")
+                    navController?.navigate("requestAlarmPermission")
                 }
             } else {
                 alarmManager.setExactAndAllowWhileIdle(
