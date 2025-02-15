@@ -1,6 +1,6 @@
-<div style="text-align: center; font-size: large">
+<div align="center">
 <h1><i>walk up</i></h1>
-<img alt="App Icon Placeholder" height="192" src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" width="192"/>
+<img alt="walk up icon" height="192" src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" width="192"/>
 </div>
 
 ## Overview
