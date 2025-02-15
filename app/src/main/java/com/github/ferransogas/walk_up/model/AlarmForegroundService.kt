@@ -3,7 +3,8 @@ package com.github.ferransogas.walk_up.model
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.media.MediaPlayer
+import android.media.AudioAttributes
+import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.*
@@ -16,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AlarmForegroundService : Service() {
-    private var mediaPlayer: MediaPlayer? = null
+    private var ringtone: Ringtone? = null
     private var vibrator: Vibrator? = null
 
 
@@ -51,8 +52,8 @@ class AlarmForegroundService : Service() {
             )
         }
 
-        mediaPlayer?.release()
-        mediaPlayer = null
+        ringtone?.stop()
+        ringtone = null
 
         vibrator?.cancel()
         vibrator = null
@@ -77,11 +78,13 @@ class AlarmForegroundService : Service() {
         val alarmUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             ?: Uri.parse("android.resource://${context.packageName}/${R.raw.fallback_alarm}")
 
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(context, alarmUri)
+        ringtone = RingtoneManager.getRingtone(context, alarmUri).apply {
             isLooping = true
-            prepare()
-            start()
+            audioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build()
+            play()
         }
     }
 
