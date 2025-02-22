@@ -35,12 +35,10 @@ fun dismissScreen(
             .background(animatedGradientBackground(colorScheme)),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
+        Box(
+            contentAlignment = Alignment.Center
+        ){
             circularProgress(progress, maxProgress, colorScheme)
-            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "walk up",
                 style = MaterialTheme.typography.displaySmall,
@@ -86,10 +84,9 @@ private fun circularProgress(progress: Float, maxProgress: Float, colorScheme: C
 
     CircularProgressIndicator(
         progress = { animatedProgress },
-        modifier = Modifier.size(160.dp),
+        modifier = Modifier.size(175.dp),
         strokeWidth = 6.dp,
         strokeCap = StrokeCap.Round,
-        // color = colorScheme.onBackground.copy(alpha = 0.8f),
-        // trackColor = colorScheme.surfaceVariant.copy(alpha = 0.4f)
+        color = colorScheme.onBackground
     )
 }
