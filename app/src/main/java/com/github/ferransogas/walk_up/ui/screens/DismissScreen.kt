@@ -85,7 +85,7 @@ private fun circularProgress(progress: Float, maxProgress: Float, colorScheme: C
     CircularProgressIndicator(
         progress = { animatedProgress },
         modifier = Modifier.size(175.dp),
-        strokeWidth = 6.dp,
+        strokeWidth = 5.dp,
         strokeCap = StrokeCap.Round,
         color = colorScheme.onBackground
     )
