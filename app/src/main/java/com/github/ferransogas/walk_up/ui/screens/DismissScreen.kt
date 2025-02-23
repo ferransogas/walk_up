@@ -1,11 +1,14 @@
 package com.github.ferransogas.walk_up.ui.screens
 
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -24,38 +27,66 @@ fun dismissScreen(
         onProgressUpdate(progress)
     }
 
-    Surface {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                circularProgress(progress, maxProgress)
-                Text(
-                    text = "walk up",
-                    style = MaterialTheme.typography.displaySmall,
-                    fontStyle = FontStyle.Italic,
-                    textAlign = TextAlign.Center
-                )
-            }
+    val colorScheme = MaterialTheme.colorScheme
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(animatedGradientBackground(colorScheme)),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            contentAlignment = Alignment.Center
+        ){
+            circularProgress(progress, maxProgress, colorScheme)
+            Text(
+                text = "walk up",
+                style = MaterialTheme.typography.displaySmall,
+                fontStyle = FontStyle.Italic,
+                color = colorScheme.onBackground,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
 
 @Composable
-private fun circularProgress(progress: Float, maxProgress: Float) {
+fun animatedGradientBackground(colorScheme: ColorScheme): Brush {
+    val transition = rememberInfiniteTransition(label = "Gradient Animation")
+
+    val color1 by transition.animateColor(
+        initialValue = colorScheme.primary,
+        targetValue = colorScheme.secondary,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 4000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = "Color1"
+    )
+
+    val color2 by transition.animateColor(
+        initialValue = colorScheme.tertiary,
+        targetValue = colorScheme.primaryContainer,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 4000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = "Color2"
+    )
+
+    return Brush.verticalGradient(listOf(color1, color2))
+}
+
+@Composable
+private fun circularProgress(progress: Float, maxProgress: Float, colorScheme: ColorScheme) {
     val animatedProgress by animateFloatAsState(
         targetValue = progress / maxProgress,
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = "Progress Animation"
     )
 
     CircularProgressIndicator(
         progress = { animatedProgress },
-        modifier = Modifier.size(220.dp),
-        strokeWidth = 4.dp,
+        modifier = Modifier.size(175.dp),
+        strokeWidth = 5.dp,
         strokeCap = StrokeCap.Round,
+        color = colorScheme.onBackground
     )
 }
