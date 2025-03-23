@@ -160,21 +160,24 @@ class WalkDetector(context: Context) {
         private const val ALPHA = 0.2f
         private const val ACCEL_THRESHOLD = 11.0f
         private const val LINEAR_ACCEL_THRESHOLD = 0.6f
-        private const val MIN_STEP_INTERVAL = 100L
-        private const val MIN_STEPS_FOR_WALKING = 2
+        private const val VERTICAL_MOVEMENT_THRESHOLD = 1.5f
+
+        private const val MIN_STEPS_FOR_WALKING = 4
+        private const val STEP_TIMING_WINDOW = 6
+
+        private const val CONSISTENT_MOVEMENT_THRESHOLD = 5
+
         private const val QUICK_STOP_INTERVAL = 600L
         private const val RESET_INTERVAL = 1500L
-        private const val STEP_TIMING_WINDOW = 4
-        private const val MAX_INTERVAL_DEVIATION = 150L
-        private const val VERTICAL_MOVEMENT_THRESHOLD = 1.5f
-        private const val CONSISTENT_MOVEMENT_THRESHOLD = 3
+        private const val MAX_INTERVAL_DEVIATION = 100L
+        private const val MIN_STEP_INTERVAL = 100L
 
         private val LINEAR_ACCEL_X_RANGE = -0.6f..0.6f
         private val LINEAR_ACCEL_Y_RANGE = -0.6f..0.6f
         private val LINEAR_ACCEL_Z_RANGE = -0.6f..0.6f
 
-        private val GYRO_X_RANGE = -0.6f..0.6f
-        private val GYRO_Y_RANGE = -0.6f..0.6f
-        private val GYRO_Z_RANGE = -0.6f..0.6f
+        private val GYRO_X_RANGE = -0.3f..0.3f
+        private val GYRO_Y_RANGE = -0.3f..0.3f
+        private val GYRO_Z_RANGE = -0.5f..0.5f
     }
 }
